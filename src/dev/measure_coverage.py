@@ -41,7 +41,7 @@ class MeasureAreaCovered:
             self.last_pose = self.current_pose
             return 1
 
-        # self.area_covered += self.polygon_area(self.calculate_corners(self.current_pose, self.last_pose, 0.85))
+        self.area_covered += self.polygon_area(self.calculate_corners(self.current_pose, self.last_pose, 0.85))
         self.dist_traveled += self.euclidean_dist(self.current_pose.position.x, self.current_pose.position.y, self.last_pose.position.x, self.last_pose.position.y)
         self.time = rospy.get_time() #get time as float secs
         self.average_speed = self.dist_traveled / self.time
@@ -54,66 +54,66 @@ class MeasureAreaCovered:
     def disp(self):
         print("dist", self.dist_traveled, "time", self.time, "speed", self.average_speed)
 
-    # def calculate_corners(self, pose, last_pose, radius):
-    #     corners = []
-    #     current_normal_angle = self.convert_quat_to_heading(pose.orientation) + math.pi / 2
-    #     last_normal_angle = self.convert_quat_to_heading(last_pose.orientation) + math.pi / 2
-    #     lines = []
+    def calculate_corners(self, pose, last_pose, radius):
+        corners = []
+        current_normal_angle = self.convert_quat_to_heading(pose.orientation) + math.pi / 2
+        last_normal_angle = self.convert_quat_to_heading(last_pose.orientation) + math.pi / 2
+        lines = []
 
-    #     corners.append((pose.position.x + radius * math.cos(current_normal_angle), pose.position.y + radius * math.sin(current_normal_angle)))
-    #     corners.append((pose.position.x + radius * math.cos(current_normal_angle + math.pi), pose.position.y + radius * math.sin(current_normal_angle + math.pi)))
-    #     self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-1], corners[-2]))
-    #     corners.append((last_pose.position.x + radius * math.cos(last_normal_angle + math.pi), last_pose.position.y + radius * math.sin(last_normal_angle + math.pi)))
-    #     self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-1], corners[-2]))
-    #     corners.append((last_pose.position.x + radius * math.cos(last_normal_angle), last_pose.position.y + radius * math.sin(last_normal_angle)))
-    #     self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-1], corners[-2]))
-    #     self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-4], corners[-1]))
-    #     self.block_constraints.append(lines)
+        corners.append((pose.position.x + radius * math.cos(current_normal_angle), pose.position.y + radius * math.sin(current_normal_angle)))
+        corners.append((pose.position.x + radius * math.cos(current_normal_angle + math.pi), pose.position.y + radius * math.sin(current_normal_angle + math.pi)))
+        self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-1], corners[-2])))
+        corners.append((last_pose.position.x + radius * math.cos(last_normal_angle + math.pi), last_pose.position.y + radius * math.sin(last_normal_angle + math.pi)))
+        self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-1], corners[-2])))
+        corners.append((last_pose.position.x + radius * math.cos(last_normal_angle), last_pose.position.y + radius * math.sin(last_normal_angle)))
+        self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-1], corners[-2])))
+        self.lines.append(self.convert_to_linear_inequality(self.convert_to_linear_function(corners[-4], corners[-1])))
+        self.block_constraints.append(lines)
 
 
-    #     return corners
+        return corners
 
-    # # shoelace method
-    # def polygon_area(self, corners):
-    #     n = len(corners) # of corners
-    #     area = 0.0
-    #     for i in range(n):
-    #         j = (i + 1) % n
-    #         area += corners[i][0] * corners[j][1]
-    #         area -= corners[j][0] * corners[i][1]
-    #     area = abs(area) / 2.0
-    #     return area
+    # shoelace method
+    def polygon_area(self, corners):
+        n = len(corners) # of corners
+        area = 0.0
+        for i in range(n):
+            j = (i + 1) % n
+            area += corners[i][0] * corners[j][1]
+            area -= corners[j][0] * corners[i][1]
+        area = abs(area) / 2.0
+        return area
 
-    # # linear function format: mx + b (m, b)
-    # def convert_to_linear_function(self, point1, point2):
-    #     m = (point2[1] - point1[1]) / (point2[0] - point1[0])
-    #     b = point1[1] - m * point1[0]
-    #     return (m, b)
+    # linear function format: mx + b (m, b)
+    def convert_to_linear_function(self, point1, point2):
+        m = (point2[1] - point1[1]) / (point2[0] - point1[0])
+        b = point1[1] - m * point1[0]
+        return (m, b)
 
-    # def solve_linear_equation(self, linear_function, x):
-    #     return linear_function[0] * x + linear_function[1]
+    def solve_linear_equation(self, linear_function, x):
+        return linear_function[0] * x + linear_function[1]
 
-    # # linear inequality format: (m, b, constrain for greater than or not, inclusive or not )
-    # def convert_to_linear_inequality(self,function, greater_than, inclusive):
-    #     return function + (greater_than,) + (inclusive,)
+    # linear inequality format: (m, b, constrain for greater than or not, inclusive or not )
+    def convert_to_linear_inequality(self,function, greater_than, inclusive):
+        return function + (greater_than,) + (inclusive,)
 
-    # def is_in_bound(self, inequalities, point):
-    #     for line in inequalities:
-    #         if line[2] == True:
-    #             if line[3] == True:
-    #                 if point[1] < solve_linear_equation(line, point[0]):
-    #                     return False
-    #             else:
-    #                 if point[1] <= solve_linear_equation(line, point[0]):
-    #                     return False
-    #         else:
-    #             if line[3] == True:
-    #                 if point[1] > solve_linear_equation(line, point[0]):
-    #                     return False
-    #             else:
-    #                 if point[1] >= solve_linear_equation(line, point[0]):
-    #                     return False
-    #     return True
+    def is_in_bound(self, inequalities, point):
+        for line in inequalities:
+            if line[2] == True:
+                if line[3] == True:
+                    if point[1] < self.solve_linear_equation(line, point[0]):
+                        return False
+                else:
+                    if point[1] <= self.solve_linear_equation(line, point[0]):
+                        return False
+            else:
+                if line[3] == True:
+                    if point[1] > self.solve_linear_equation(line, point[0]):
+                        return False
+                else:
+                    if point[1] >= self.solve_linear_equation(line, point[0]):
+                        return False
+        return True
 
-    # def convert_quat_to_heading(self, quat):
-    #     return euler_from_quaternion([quat.x, quat.y, quat.z, quat.w])[2]
+    def convert_quat_to_heading(self, quat):
+        return euler_from_quaternion([quat.x, quat.y, quat.z, quat.w])[2]

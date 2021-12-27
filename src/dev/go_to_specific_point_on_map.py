@@ -62,11 +62,11 @@ class GoToPose():
             distance = sqrt(pow((goal_x - x_start), 2) + pow((goal_y - y_start), 2))
             z_dist = min(abs(rotation - path_angle), abs(2 * pi - abs(rotation - path_angle)))
 
-            # detect and halt open loop behaviorr
+            # detect and halt open loop behavior
             if distance > old_distance + 0.1:
                 break
 
-            # proportional control for lienear speed
+            # proportional control for linear speed
             self.move_cmd.linear.x = min(linear_speed * distance ** 1.1 + 0.1, linear_speed)
 
             # proportional control for heading

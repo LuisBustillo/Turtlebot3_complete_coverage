@@ -13,7 +13,7 @@ class generateTargets():
         pass
 
     def convert_pgm_to_dict(self):
-        pgmf = open('/home/jack/map.pgm', 'rb')
+        pgmf = open('/home/luis/map.pgm', 'rb')
         print(pgmf.readline().decode('utf-8'))
         print(pgmf.readline().decode('utf-8'))    
         (width, height) = [int(i) for i in pgmf.readline().decode('utf-8').split()]
@@ -90,7 +90,7 @@ class generateTargets():
 
     def generate_yaml_path(self, path_points):
       # /home/jack/catkin_ws/src/turtlebot3/dev/nodes/
-      with open('/home/jack/catkin_ws/src/turtlebot3/dev/nodes/route.yaml', 'w') as f:
+      with open('/home/luis/catkin_ws/src/Turtlebot3_complete_coverage/nodes/route.yaml', 'w') as f:
         index = 0
         for point in path_points:
           index += 1    

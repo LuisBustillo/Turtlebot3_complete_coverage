@@ -1,4 +1,4 @@
-image: /home/jack/map.pgm
+image: /home/luis/map.pgm
 resolution: 0.025000
 origin: [-7.000000, -7.000000, 0.000000]
 negate: 0
